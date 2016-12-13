@@ -1,0 +1,67 @@
+// 1)
+MATCH (p:Person {name: "Mary"})
+CREATE (n:Person { name: "Tom", country: "Spain", sport: "Football"}),
+(p)-[:FRIEND_OF]->(n);
+
+//2)
+MATCH (a:Person {name:"Mary"}),
+    (b:Person {name:"Denis"})
+CREATE (c:Person {name: "Bill", age: 23, country: "Ireland"}),
+(c)-[:FRIEND_OF]->(a),
+(c)-[:FRIEND_OF]->(b);
+
+//3)
+MATCH (a:Person {name:"Denis"})-[:FRIEND_OF]->(b:Person)
+return a.age,b.age;
+
+//4)
+MATCH (a:Person {country:"Scotland"}) return a;
+
+//5)
+MATCH (a:Person)
+WHERE a.country="Ireland" AND a.age <= 20
+RETURN a;
+
+//6)
+MATCH (a:Person)
+WHERE a.sport="Football" AND a.age <= 30
+RETURN a;
+
+//7)
+MATCH(a:Person)
+RETURN a.country, count(a.country)
+ORDER BY a.country;
+
+//8)
+MATCH(a:Person)
+RETURN a.sport, avg(a.age)
+ORDER BY a.sport;
+
+//9)
+MATCH(a:Person {name:"Mary"})-[:FRIEND_OF*1]->(b:Person)
+RETURN a, b;
+
+//10)
+MATCH(a:Person {name:"Paul"})-[:FRIEND_OF*..5]->(b:Person)
+RETURN a, b;
+
+//11)
+MATCH(a:Person {name:"Paul"})-[:FRIEND_OF*..5]->(b:Person)
+RETURN b.country, count(b.country)
+ORDER BY b.country;
+
+//12)
+MATCH p = (a:Person {name:"Paul"})-[:FRIEND_OF*..]->(l:Person {name:"Lisa"})
+RETURN p, length(p);
+
+//13)
+MATCH p = shortestPath((a:Person {name:"Paul"})-[:FRIEND_OF]->(l:Person {name:"Lisa"}))
+RETURN p, length(p);
+
+//14)
+MATCH (a:Person {name:"Mary"})-[:FRIEND_OF*1]->(b:Person {sport:"Football"})
+RETURN a, b;
+
+
+
+

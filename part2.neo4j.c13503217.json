@@ -1,0 +1,73 @@
+CREATE (a1:Airport {code:"dub", city:"dublin", country:"ireland"}),
+    (a2:Airport {code:"ork", city:"cork", country:"ireland"}),
+    (a3:Airport {code:"lhr", city:"london", country:"uk"}),
+    (a4:Airport {code:"fco", city:"rome", country:"italy"}),
+    (a5:Airport {code:"dme", city:"moscow", country:"russia"}),
+    (a6:Airport {code:"hkg", city:"hongkong", country:"china"}),
+    (a7:Airport {code:"ams", city:"amsterdam", country:"holland"}),
+    (a8:Airport {code:"txl", city:"berlin", country:"germany"}),
+    (a9:Airport {code:"cdg", city:"paris", country:"france"}),
+    (a10:Airport {code:"jfk", city:"newyork", country:"usa"}),
+    (a11:Airport {code:"ord", city:"chicago", country:"usa"}),
+    (a12:Airport {code:"gru", city:"saopaulo", country:"brazil"}),
+    (a13:Airport {code:"gig", city:"rio", country:"brazil"}),
+    (a3)-[:CONNECTED_TO {time:45, price:150}]->(a1),
+    (a4)-[:CONNECTED_TO {time:150, price:400}]->(a3),
+    (a4)-[:CONNECTED_TO {time:120, price:500}]->(a9),
+    (a9)-[:CONNECTED_TO {time:60, price:200}]->(a1),
+    (a8)-[:CONNECTED_TO {time:240, price:900}]->(a5),
+    (a9)-[:CONNECTED_TO {time:30, price:100}]->(a7),
+    (a8)-[:CONNECTED_TO {time:120, price:900}]->(a1),
+    (a3)-[:CONNECTED_TO {time:700, price:1100}]->(a10),
+    (a1)-[:CONNECTED_TO {time:360, price:800}]->(a10),
+    (a1)-[:CONNECTED_TO {time:50, price:50}]->(a2),
+    (a1)-[:CONNECTED_TO {time:150, price:70}]->(a4),
+    (a1)-[:CONNECTED_TO {time:480, price:890}]->(a11),
+    (a7)-[:CONNECTED_TO {time:660, price:750}]->(a6),
+    (a3)-[:CONNECTED_TO {time:700, price:1000}]->(a6),
+    (a1)-[:CONNECTED_TO {time:90, price:60}]->(a7),
+    (a5)-[:CONNECTED_TO {time:720, price:1000}]->(a10),
+    (a5)-[:CONNECTED_TO {time:420, price:500}]->(a6),
+    (a10)-[:CONNECTED_TO {time:240, price:430}]->(a11),
+    (a1)-[:CONNECTED_TO {time:900, price:800}]->(a12),
+    (a12)-[:CONNECTED_TO {time:840, price:650}]->(a10),
+    (a13)-[:CONNECTED_TO {time:1200, price:1100}]->(a8),
+        (a1)-[:CONNECTED_TO {time:45, price:150}]->(a3),
+    (a3)-[:CONNECTED_TO {time:150, price:400}]->(a4),
+    (a9)-[:CONNECTED_TO {time:120, price:500}]->(a4),
+    (a1)-[:CONNECTED_TO {time:60, price:200}]->(a9),
+    (a5)-[:CONNECTED_TO {time:240, price:900}]->(a8),
+    (a7)-[:CONNECTED_TO {time:30, price:100}]->(a9),
+    (a1)-[:CONNECTED_TO {time:120, price:900}]->(a8),
+    (a10)-[:CONNECTED_TO {time:700, price:1100}]->(a3),
+    (a10)-[:CONNECTED_TO {time:360, price:800}]->(a1),
+    (a2)-[:CONNECTED_TO {time:50, price:50}]->(a1),
+    (a4)-[:CONNECTED_TO {time:150, price:70}]->(a1),
+    (a11)-[:CONNECTED_TO {time:480, price:890}]->(a1),
+    (a6)-[:CONNECTED_TO {time:660, price:750}]->(a7),
+    (a6)-[:CONNECTED_TO {time:700, price:1000}]->(a3),
+    (a7)-[:CONNECTED_TO {time:90, price:60}]->(a1),
+    (a10)-[:CONNECTED_TO {time:720, price:1000}]->(a5),
+    (a6)-[:CONNECTED_TO {time:420, price:500}]->(a5),
+    (a11)-[:CONNECTED_TO {time:240, price:430}]->(a10),
+    (a12)-[:CONNECTED_TO {time:900, price:800}]->(a1),
+    (a10)-[:CONNECTED_TO {time:840, price:650}]->(a12),
+    (a8)-[:CONNECTED_TO {time:1200, price:1100}]->(a13);
+
+//1)
+MATCH p = (a:Airport {city:"moscow"})-[:CONNECTED_TO*..5]->(b:Airport {city:"rio"})
+RETURN p, REDUCE(totaltime = 0, c IN relationships(p) | totaltime + c.time) ;
+
+//2)
+MATCH (a:Airport {city:"dublin"})-[c:CONNECTED_TO]->(b:Airport)
+RETURN a.city , b.city , c.price 
+ORDER BY c.price DESC;
+
+//3)
+MATCH p = (a:Airport {city:"chicago"})-[:CONNECTED_TO*..2]->(b:Airport)
+RETURN p;
+
+//4)
+MATCH (a:Airport {city:"london"})-[c:CONNECTED_TO]->(b:Airport)
+WHERE c.time < 240
+RETURN a.city , b.city , c.time ;
